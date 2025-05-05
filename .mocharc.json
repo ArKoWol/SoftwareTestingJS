@@ -1,5 +1,7 @@
 {
-  "spec": "test/**/*.test.js",
-  "reporter": "spec",
-  "node-option": ["experimental-vm-modules"]
+  "extension": ["js"],
+  "spec": "./**/*.test.js",
+  "node-option": [
+    "experimental-vm-modules"
+  ]
 }
