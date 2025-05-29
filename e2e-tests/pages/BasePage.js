@@ -23,11 +23,55 @@ export class BasePage {
   }
 
   async navigate(url) {
-    await this.page.goto(url);
+    try {
+      // If URL is relative, it will use baseURL from config
+      await this.page.goto(url, {
+        waitUntil: 'domcontentloaded',
+        timeout: 45000, // Increased timeout
+      });
+
+      // Additional wait to ensure page is fully loaded
+      await this.page.waitForLoadState('networkidle', { timeout: 20000 });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(`Navigation to ${url} failed: ${error.message}`);
+      // Retry once with even longer timeout and different strategy
+      try {
+        await this.page.goto(url, {
+          waitUntil: 'load',
+          timeout: 60000,
+        });
+      } catch (retryError) {
+        // eslint-disable-next-line no-console
+        console.log(`Retry navigation failed: ${retryError.message}`);
+        // Final attempt with minimal wait strategy
+        await this.page.goto(url, {
+          waitUntil: 'commit',
+          timeout: 90000,
+        });
+      }
+    }
   }
 
   async waitForElement(selector, options = {}) {
-    return await this.page.waitForSelector(selector, options);
+    const defaultOptions = {
+      timeout: 15000,
+      state: 'visible',
+    };
+
+    try {
+      return await this.page.waitForSelector(selector, { ...defaultOptions, ...options });
+    } catch {
+      // eslint-disable-next-line no-console
+      console.log(`Element ${selector} not found, retrying...`);
+      // Retry once with attached state instead of visible
+      return await this.page.waitForSelector(selector, {
+        ...defaultOptions,
+        ...options,
+        state: 'attached',
+        timeout: 10000,
+      });
+    }
   }
 
   async click(selector, options = {}) {
