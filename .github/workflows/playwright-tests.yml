@@ -9,14 +9,20 @@ on:
     # Run daily at 2:00 AM UTC
     - cron: '0 2 * * *'
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+  pull-requests: write
+
 jobs:
-  test:
-    timeout-minutes: 60
+  chromium-tests:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        project: [chromium-1920x1080, chromium-1366x768, firefox-1920x1080, firefox-1366x768]
+        project: [chromium-1920x1080, chromium-1366x768]
     
     steps:
     - uses: actions/checkout@v4
@@ -30,9 +36,9 @@ jobs:
       run: npm ci
     
     - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      run: npx playwright install chromium --with-deps
     
-    - name: Run Playwright tests
+    - name: Run Chromium tests
       run: npx playwright test --project=${{ matrix.project }}
       env:
         CI: true
@@ -55,10 +61,62 @@ jobs:
         path: screenshots/
         retention-days: 30
 
+  firefox-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [firefox-1920x1080, firefox-1366x768]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Install Playwright Browsers
+      run: npx playwright install firefox --with-deps
+    
+    - name: Run Firefox tests (optimized)
+      run: npx playwright test --project=${{ matrix.project }} --workers=1
+      env:
+        CI: true
+        PROJECT_NAME: ${{ matrix.project }}
+        NODE_OPTIONS: "--max-old-space-size=4096"
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.project }}
+        path: |
+          test-results/
+          playwright-report/
+        retention-days: 30
+    
+    - name: Upload screenshots
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: screenshots-${{ matrix.project }}
+        path: screenshots/
+        retention-days: 30
+
   report:
     if: always()
-    needs: [test]
+    needs: [chromium-tests, firefox-tests]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      checks: write
+      pull-requests: write
     
     steps:
     - uses: actions/checkout@v4
@@ -87,4 +145,13 @@ jobs:
       with:
         name: Playwright Test Results
         path: 'artifacts/**/junit.xml'
-        reporter: java-junit 
+        reporter: java-junit
+        path-replace-backslashes: false
+        list-suites: all
+        list-tests: all
+        max-annotations: 10
+        fail-on-error: false
+        fail-on-empty: false
+        only-summary: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 

@@ -7,14 +7,16 @@ const __dirname = dirname(__filename);
 
 export default defineConfig({
   testDir: './e2e-tests',
-  globalSetup: resolve(__dirname, './e2e-tests/global-setup.js'),
+  globalSetup: process.env.CI && process.env.PROJECT_NAME?.includes('firefox')
+    ? resolve(__dirname, './e2e-tests/global-setup.js')
+    : undefined,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  timeout: 120000, // 2 minutes test timeout (increased for CI)
+  timeout: process.env.CI ? 150000 : 120000, // 2.5 minutes for CI, 2 minutes locally
   expect: {
-    timeout: 20000, // 20 seconds for assertions (increased)
+    timeout: 20000, // 20 seconds for assertions
   },
   reporter: [
     ['html'],
@@ -25,8 +27,8 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    actionTimeout: 30000, // 30 seconds for actions (increased)
-    navigationTimeout: 60000, // 60 seconds for navigation (increased)
+    actionTimeout: 30000, // 30 seconds for actions
+    navigationTimeout: process.env.CI ? 90000 : 60000, // Longer in CI
     launchOptions: {
       args: [
         '--disable-web-security',
