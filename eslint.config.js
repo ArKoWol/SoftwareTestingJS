@@ -6,6 +6,8 @@ export default {
     globals: {
       browser: true,
       node: true,
+      process: true,  // Added for Node.js process global
+      console: true,  // Added for console global
       mocha: true, // Добавлен для тестов Mocha
       describe: true, // Глобальные функции Mocha
       it: true,      // Глобальные функции Mocha

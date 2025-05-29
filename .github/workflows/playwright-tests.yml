@@ -1,0 +1,90 @@
+name: Playwright E2E Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    # Run daily at 2:00 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium-1920x1080, chromium-1366x768, firefox-1920x1080, firefox-1366x768]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    
+    - name: Run Playwright tests
+      run: npx playwright test --project=${{ matrix.project }}
+      env:
+        CI: true
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.project }}
+        path: |
+          test-results/
+          playwright-report/
+        retention-days: 30
+    
+    - name: Upload screenshots
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: screenshots-${{ matrix.project }}
+        path: screenshots/
+        retention-days: 30
+
+  report:
+    if: always()
+    needs: [test]
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+    
+    - name: Merge test results
+      run: |
+        mkdir -p merged-results
+        find artifacts -name "*.xml" -exec cp {} merged-results/ \;
+        find artifacts -name "*.html" -exec cp {} merged-results/ \;
+    
+    - name: Upload merged results
+      uses: actions/upload-artifact@v4
+      with:
+        name: merged-test-results
+        path: merged-results/
+        retention-days: 30
+    
+    - name: Publish Test Results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Playwright Test Results
+        path: 'artifacts/**/junit.xml'
+        reporter: java-junit 

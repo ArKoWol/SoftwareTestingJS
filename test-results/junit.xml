@@ -1,0 +1,6 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="2.517541">
+<testsuite name="tests/text-box.spec.js" timestamp="2025-05-29T13:33:10.261Z" hostname="chromium-1920x1080" tests="1" failures="0" skipped="0" time="1.403" errors="0">
+<testcase name="Text Box Tests › Should fill text box with random data set 1" classname="tests/text-box.spec.js" time="1.403">
+</testcase>
+</testsuite>
+</testsuites>
