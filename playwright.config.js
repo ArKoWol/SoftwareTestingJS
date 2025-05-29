@@ -31,15 +31,8 @@ export default defineConfig({
     actionTimeout: 45000, // Increased for CI
     navigationTimeout: process.env.CI ? 120000 : 60000, // 2 minutes in CI
     launchOptions: {
-      args: [
-        '--disable-web-security',
-        '--disable-features=TranslateUI',
-        '--disable-ipc-flooding-protection',
-        '--disable-background-timer-throttling',
-        '--disable-renderer-backgrounding',
-        '--disable-backgrounding-occluded-windows',
-        '--disable-component-extensions-with-background-pages',
-      ],
+      // Remove browser-specific args from general config
+      // Each browser project will specify its own appropriate args
     },
   },
 
@@ -72,37 +65,10 @@ export default defineConfig({
           timeout: process.env.CI ? 300000 : 120000, // 5 minutes for browser launch in CI
           slowMo: process.env.CI ? 1000 : 0, // Add 1s delay between actions in CI
           args: [
-            '--no-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-web-security',
-            '--disable-features=TranslateUI',
-            '--disable-ipc-flooding-protection',
-            '--disable-background-timer-throttling',
-            '--disable-renderer-backgrounding',
-            '--disable-backgrounding-occluded-windows',
-            '--disable-component-extensions-with-background-pages',
-            '--disable-blink-features=AutomationControlled',
-            '--disable-extensions',
-            '--no-first-run',
-            '--disable-default-apps',
-            '--disable-sync',
-            '--disable-translate',
-            '--hide-scrollbars',
-            '--mute-audio',
-            '--disable-background-networking',
-            '--disable-background-downloads',
-            // Additional CI-specific flags
-            ...(process.env.CI ? [
-              '--disable-gpu',
-              '--disable-software-rasterizer',
-              '--disable-background-timer-throttling',
-              '--disable-renderer-backgrounding',
-              '--disable-field-trial-config',
-              '--disable-backing-store-limit',
-              '--disable-ipc-flooding-protection',
-              '--memory-pressure-off',
-              '--max_old_space_size=4096',
-            ] : []),
+            '-no-remote',
+            '-headless',
+            '-silent',
+            // Remove Chrome-specific flags that Firefox doesn't recognize
           ],
           firefoxUserPrefs: {
             // Disable notifications and permissions
@@ -146,6 +112,23 @@ export default defineConfig({
             'network.http.connection-timeout': process.env.CI ? 180 : 90,
             'network.http.response.timeout': process.env.CI ? 180 : 90,
 
+            // Firefox-specific stability improvements
+            'browser.sessionstore.restore_on_demand': false,
+            'browser.sessionstore.resume_from_crash': false,
+            'browser.tabs.crashReporting.sendReport': false,
+            'toolkit.startup.max_resumed_crashes': 0,
+            'browser.tabs.remote.autostart': false,
+            'extensions.autoDisableScopes': 15,
+            'extensions.enabledScopes': 0,
+
+            // Disable problematic features causing JavaScript errors
+            'browser.search.geoip.url': '',
+            'browser.search.suggest.enabled': false,
+            'services.settings.server': '',
+            'datareporting.policy.dataSubmissionEnabled': false,
+            'datareporting.healthreport.service.enabled': false,
+            'browser.crashReports.unsubmittedCheck.enabled': false,
+
             // Additional CI optimizations
             ...(process.env.CI ? {
               'browser.sessionstore.interval': 300000,
@@ -154,6 +137,12 @@ export default defineConfig({
               'layers.acceleration.disabled': true,
               'gfx.canvas.azure.backends': 'skia',
               'gfx.content.azure.backends': 'skia',
+              // Disable backup service that's causing errors
+              'browser.backup.enabled': false,
+              // Disable problematic telemetry
+              'toolkit.telemetry.enabled': false,
+              'toolkit.telemetry.unified': false,
+              'datareporting.healthreport.uploadEnabled': false,
             } : {}),
           },
         },
@@ -173,37 +162,10 @@ export default defineConfig({
           timeout: process.env.CI ? 300000 : 120000, // 5 minutes for browser launch in CI
           slowMo: process.env.CI ? 1000 : 0, // Add 1s delay between actions in CI
           args: [
-            '--no-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-web-security',
-            '--disable-features=TranslateUI',
-            '--disable-ipc-flooding-protection',
-            '--disable-background-timer-throttling',
-            '--disable-renderer-backgrounding',
-            '--disable-backgrounding-occluded-windows',
-            '--disable-component-extensions-with-background-pages',
-            '--disable-blink-features=AutomationControlled',
-            '--disable-extensions',
-            '--no-first-run',
-            '--disable-default-apps',
-            '--disable-sync',
-            '--disable-translate',
-            '--hide-scrollbars',
-            '--mute-audio',
-            '--disable-background-networking',
-            '--disable-background-downloads',
-            // Additional CI-specific flags
-            ...(process.env.CI ? [
-              '--disable-gpu',
-              '--disable-software-rasterizer',
-              '--disable-background-timer-throttling',
-              '--disable-renderer-backgrounding',
-              '--disable-field-trial-config',
-              '--disable-backing-store-limit',
-              '--disable-ipc-flooding-protection',
-              '--memory-pressure-off',
-              '--max_old_space_size=4096',
-            ] : []),
+            '-no-remote',
+            '-headless',
+            '-silent',
+            // Remove Chrome-specific flags that Firefox doesn't recognize
           ],
           firefoxUserPrefs: {
             // Disable notifications and permissions
@@ -247,6 +209,23 @@ export default defineConfig({
             'network.http.connection-timeout': process.env.CI ? 180 : 90,
             'network.http.response.timeout': process.env.CI ? 180 : 90,
 
+            // Firefox-specific stability improvements
+            'browser.sessionstore.restore_on_demand': false,
+            'browser.sessionstore.resume_from_crash': false,
+            'browser.tabs.crashReporting.sendReport': false,
+            'toolkit.startup.max_resumed_crashes': 0,
+            'browser.tabs.remote.autostart': false,
+            'extensions.autoDisableScopes': 15,
+            'extensions.enabledScopes': 0,
+
+            // Disable problematic features causing JavaScript errors
+            'browser.search.geoip.url': '',
+            'browser.search.suggest.enabled': false,
+            'services.settings.server': '',
+            'datareporting.policy.dataSubmissionEnabled': false,
+            'datareporting.healthreport.service.enabled': false,
+            'browser.crashReports.unsubmittedCheck.enabled': false,
+
             // Additional CI optimizations
             ...(process.env.CI ? {
               'browser.sessionstore.interval': 300000,
@@ -255,6 +234,12 @@ export default defineConfig({
               'layers.acceleration.disabled': true,
               'gfx.canvas.azure.backends': 'skia',
               'gfx.content.azure.backends': 'skia',
+              // Disable backup service that's causing errors
+              'browser.backup.enabled': false,
+              // Disable problematic telemetry
+              'toolkit.telemetry.enabled': false,
+              'toolkit.telemetry.unified': false,
+              'datareporting.healthreport.uploadEnabled': false,
             } : {}),
           },
         },
