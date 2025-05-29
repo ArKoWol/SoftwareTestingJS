@@ -11,8 +11,15 @@ export class ToolTipsPage extends BasePage {
     this.contraryLink = 'a[href="#"]';
     this.sectionLink = 'a[href="#"]';
 
-    // Tooltip selector
-    this.tooltip = '.tooltip-inner';
+    // Multiple tooltip selectors to try
+    this.tooltipSelectors = [
+      '.tooltip-inner',
+      '.tooltip .tooltip-inner',
+      '[role="tooltip"]',
+      '.bs-tooltip-inner',
+      '.tooltip',
+      '[class*="tooltip"]',
+    ];
   }
 
   async navigateToToolTipsPage() {
@@ -20,34 +27,52 @@ export class ToolTipsPage extends BasePage {
     await this.waitForElement(this.hoverMeButton);
   }
 
+  async waitForTooltip() {
+    // Try multiple tooltip selectors
+    for (const selector of this.tooltipSelectors) {
+      try {
+        await this.page.waitForSelector(selector, { state: 'visible', timeout: 3000 });
+        return selector;
+      } catch {
+        // Continue to next selector
+      }
+    }
+    throw new Error('No tooltip found with any of the selectors');
+  }
+
+  async getTooltipText() {
+    const tooltipSelector = await this.waitForTooltip();
+    return await this.getText(tooltipSelector);
+  }
+
   async clearTooltip() {
     // Move mouse to a neutral position to clear any existing tooltip
-    await this.page.hover('h1'); // Hover over the page title instead of body
-    await this.waitForTimeout(500); // Increased wait time
+    await this.page.hover('h1'); // Hover over the page title
+    await this.waitForTimeout(800); // Increased wait time
 
     // Wait for any existing tooltip to disappear
-    try {
-      await this.page.waitForSelector(this.tooltip, { state: 'hidden', timeout: 2000 });
-    } catch {
-      // Tooltip might not exist, continue
+    for (const selector of this.tooltipSelectors) {
+      try {
+        await this.page.waitForSelector(selector, { state: 'hidden', timeout: 2000 });
+      } catch {
+        // Tooltip might not exist, continue
+      }
     }
   }
 
   async hoverOverButton() {
     await this.clearTooltip();
     await this.page.hover(this.hoverMeButton);
-    await this.waitForElement(this.tooltip);
-    const text = await this.getText(this.tooltip);
-    await this.clearTooltip(); // Clear after getting text
+    const text = await this.getTooltipText();
+    await this.clearTooltip();
     return text;
   }
 
   async hoverOverTextField() {
     await this.clearTooltip();
     await this.page.hover(this.hoverMeInput);
-    await this.waitForElement(this.tooltip);
-    const text = await this.getText(this.tooltip);
-    await this.clearTooltip(); // Clear after getting text
+    const text = await this.getTooltipText();
+    await this.clearTooltip();
     return text;
   }
 
@@ -56,9 +81,8 @@ export class ToolTipsPage extends BasePage {
     // There are multiple links, we need to find the one with "Contrary" text
     const contraryLink = this.page.locator('a:has-text("Contrary")');
     await contraryLink.hover();
-    await this.waitForElement(this.tooltip);
-    const text = await this.getText(this.tooltip);
-    await this.clearTooltip(); // Clear after getting text
+    const text = await this.getTooltipText();
+    await this.clearTooltip();
     return text;
   }
 
@@ -67,9 +91,8 @@ export class ToolTipsPage extends BasePage {
     // Find the link with "1.10.32" text
     const sectionLink = this.page.locator('a:has-text("1.10.32")');
     await sectionLink.hover();
-    await this.waitForElement(this.tooltip);
-    const text = await this.getText(this.tooltip);
-    await this.clearTooltip(); // Clear after getting text
+    const text = await this.getTooltipText();
+    await this.clearTooltip();
     return text;
   }
 

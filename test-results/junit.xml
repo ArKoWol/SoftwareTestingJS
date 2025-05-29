@@ -1,6 +1,34 @@
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="2.67283">
-<testsuite name="tests/text-box.spec.js" timestamp="2025-05-29T13:39:19.890Z" hostname="chromium-1920x1080" tests="1" failures="0" skipped="0" time="1.339" errors="0">
-<testcase name="Text Box Tests › Should fill text box with random data set 1" classname="tests/text-box.spec.js" time="1.339">
+<testsuites id="" name="" tests="14" failures="0" skipped="0" errors="0" time="21.551311000000002">
+<testsuite name="tests/automation-practice-form.spec.js" timestamp="2025-05-29T13:58:28.735Z" hostname="chromium-1920x1080" tests="8" failures="0" skipped="0" time="19.385" errors="0">
+<testcase name="Automation Practice Form Tests › Should fill and submit form - Random data set 1" classname="tests/automation-practice-form.spec.js" time="2.679">
+</testcase>
+<testcase name="Automation Practice Form Tests › Should fill and submit form - Random data set 2" classname="tests/automation-practice-form.spec.js" time="2.678">
+</testcase>
+<testcase name="Automation Practice Form Tests › Should fill and submit form - Random data set 3" classname="tests/automation-practice-form.spec.js" time="2.677">
+</testcase>
+<testcase name="Automation Practice Form Tests › Should fill and submit form - Random data set 4" classname="tests/automation-practice-form.spec.js" time="2.88">
+</testcase>
+<testcase name="Automation Practice Form Tests › Should fill and submit form - Random data set 5" classname="tests/automation-practice-form.spec.js" time="2.084">
+</testcase>
+<testcase name="Automation Practice Form Tests › Should fill and submit form - Long names test" classname="tests/automation-practice-form.spec.js" time="2.08">
+</testcase>
+<testcase name="Automation Practice Form Tests › Should fill and submit form - Special characters test" classname="tests/automation-practice-form.spec.js" time="2.085">
+</testcase>
+<testcase name="Automation Practice Form Tests › Should validate form with empty fields handling" classname="tests/automation-practice-form.spec.js" time="2.222">
+</testcase>
+</testsuite>
+<testsuite name="tests/tool-tips.spec.js" timestamp="2025-05-29T13:58:28.735Z" hostname="chromium-1920x1080" tests="6" failures="0" skipped="0" time="34.793" errors="0">
+<testcase name="Tool Tips Tests › Should display tooltip when hovering over button" classname="tests/tool-tips.spec.js" time="3.039">
+</testcase>
+<testcase name="Tool Tips Tests › Should display tooltip when hovering over text field" classname="tests/tool-tips.spec.js" time="3.018">
+</testcase>
+<testcase name="Tool Tips Tests › Should display tooltip when hovering over Contrary link" classname="tests/tool-tips.spec.js" time="2.983">
+</testcase>
+<testcase name="Tool Tips Tests › Should display tooltip when hovering over section link" classname="tests/tool-tips.spec.js" time="3.071">
+</testcase>
+<testcase name="Tool Tips Tests › Should check text on all tooltips" classname="tests/tool-tips.spec.js" time="12.034">
+</testcase>
+<testcase name="Tool Tips Tests › Should display tooltips sequentially without interference" classname="tests/tool-tips.spec.js" time="10.648">
 </testcase>
 </testsuite>
 </testsuites>

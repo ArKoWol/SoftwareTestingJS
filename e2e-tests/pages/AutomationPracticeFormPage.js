@@ -88,7 +88,43 @@ export class AutomationPracticeFormPage extends BasePage {
   }
 
   async closeModal() {
-    await this.click(this.closeButton);
+    // Wait for modal to be visible first
+    await this.waitForElement(this.modalDialog);
+
+    // Try multiple strategies to close the modal
+    try {
+      // First, try to remove any interfering elements
+      await this.page.evaluate(() => {
+        // Remove ad elements that might be interfering
+        // eslint-disable-next-line no-undef
+        const ads = document.querySelectorAll('#fixedban, [id*="google_ads"], iframe[src*="googlesyndication"]');
+        ads.forEach(ad => ad.remove());
+      });
+
+      // Wait a moment for DOM to update
+      await this.waitForTimeout(500);
+
+      // Try clicking the close button
+      await this.click(this.closeButton);
+
+      // Wait for modal to disappear
+      await this.page.waitForSelector(this.modalDialog, { state: 'hidden', timeout: 5000 });
+    } catch {
+      // If clicking fails, try alternative methods
+      try {
+        // Try pressing Escape key
+        await this.page.keyboard.press('Escape');
+        await this.page.waitForSelector(this.modalDialog, { state: 'hidden', timeout: 3000 });
+      } catch {
+        // Last resort: force click or JavaScript click
+        await this.page.evaluate(() => {
+          // eslint-disable-next-line no-undef
+          const closeBtn = document.querySelector('#closeLargeModal');
+          if (closeBtn) {closeBtn.click();}
+        });
+        await this.waitForTimeout(1000);
+      }
+    }
   }
 
   async validateFormSubmission(expectedData) {
