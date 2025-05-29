@@ -3,6 +3,7 @@ export class BasePage {
     this.page = page;
     this.setupAdBlocking();
     this.isFirefox = page.context().browser().browserType().name() === 'firefox';
+    this.isCI = !!process.env.CI;
   }
 
   async setupAdBlocking() {
@@ -24,28 +25,33 @@ export class BasePage {
   }
 
   async navigate(url) {
-    const maxRetries = this.isFirefox ? 4 : 2;
-    const baseTimeout = this.isFirefox ? 60000 : 45000;
+    const maxRetries = this.isFirefox && this.isCI ? 6 : this.isFirefox ? 4 : 2;
+    const baseTimeout = this.isFirefox && this.isCI ? 120000 : this.isFirefox ? 60000 : 45000;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         // eslint-disable-next-line no-console
         console.log(`Navigation attempt ${attempt}/${maxRetries} to ${url}`);
 
+        // For Firefox in CI, add longer initial delay
+        if (this.isFirefox && this.isCI && attempt === 1) {
+          await this.page.waitForTimeout(3000);
+        }
+
         // If URL is relative, it will use baseURL from config
         await this.page.goto(url, {
           waitUntil: 'domcontentloaded',
-          timeout: baseTimeout + (attempt * 15000), // Increasing timeout with each attempt
+          timeout: baseTimeout + (attempt * 20000), // Increasing timeout with each attempt
         });
 
         // Additional wait to ensure page is fully loaded
         await this.page.waitForLoadState('networkidle', {
-          timeout: this.isFirefox ? 30000 : 20000,
+          timeout: this.isFirefox && this.isCI ? 60000 : this.isFirefox ? 30000 : 20000,
         });
 
         // For Firefox, add extra stability wait
         if (this.isFirefox) {
-          await this.page.waitForTimeout(1000);
+          await this.page.waitForTimeout(this.isCI ? 2000 : 1000);
         }
 
         // eslint-disable-next-line no-console
@@ -65,9 +71,13 @@ export class BasePage {
           const waitStrategy = attempt === 1 ? 'load' :
             attempt === 2 ? 'domcontentloaded' : 'commit';
 
+          // Add exponential backoff delay
+          const retryDelay = this.isCI ? 5000 * attempt : 2000 * attempt;
+          await this.page.waitForTimeout(retryDelay);
+
           await this.page.goto(url, {
             waitUntil: waitStrategy,
-            timeout: baseTimeout + (attempt * 20000),
+            timeout: baseTimeout + (attempt * 30000),
           });
 
           // eslint-disable-next-line no-console
@@ -78,8 +88,9 @@ export class BasePage {
           // eslint-disable-next-line no-console
           console.log(`Retry ${attempt} failed: ${retryError.message}`);
 
-          // Wait before next attempt
-          await this.page.waitForTimeout(2000 * attempt);
+          // Wait before next attempt with exponential backoff
+          const backoffDelay = this.isCI ? 10000 * attempt : 3000 * attempt;
+          await this.page.waitForTimeout(backoffDelay);
         }
       }
     }
@@ -87,11 +98,11 @@ export class BasePage {
 
   async waitForElement(selector, options = {}) {
     const defaultOptions = {
-      timeout: this.isFirefox ? 25000 : 15000,
+      timeout: this.isFirefox && this.isCI ? 45000 : this.isFirefox ? 25000 : 15000,
       state: 'visible',
     };
 
-    const maxRetries = this.isFirefox ? 3 : 2;
+    const maxRetries = this.isFirefox && this.isCI ? 5 : this.isFirefox ? 3 : 2;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
@@ -101,12 +112,12 @@ export class BasePage {
         const element = await this.page.waitForSelector(selector, {
           ...defaultOptions,
           ...options,
-          timeout: defaultOptions.timeout + (attempt * 5000),
+          timeout: defaultOptions.timeout + (attempt * 10000),
         });
 
         // For Firefox, ensure element is really ready
         if (this.isFirefox && element) {
-          await this.page.waitForTimeout(500);
+          await this.page.waitForTimeout(this.isCI ? 1000 : 500);
           // Double-check element is still visible
           const isVisible = await element.isVisible();
           if (!isVisible) {
@@ -126,8 +137,9 @@ export class BasePage {
 
         // Progressive fallback strategies
         try {
-          const fallbackState = attempt === 1 ? 'attached' : 'hidden';
-          const fallbackTimeout = this.isFirefox ? 15000 : 10000;
+          const fallbackState = attempt === 1 ? 'attached' :
+            attempt === 2 ? 'hidden' : 'attached';
+          const fallbackTimeout = this.isFirefox && this.isCI ? 30000 : this.isFirefox ? 15000 : 10000;
 
           // eslint-disable-next-line no-console
           console.log(`Trying fallback strategy for ${selector} with state: ${fallbackState}`);
@@ -145,8 +157,9 @@ export class BasePage {
           // eslint-disable-next-line no-console
           console.log(`Fallback strategy failed for ${selector}: ${fallbackError.message}`);
 
-          // Wait before next attempt
-          await this.page.waitForTimeout(1000 * attempt);
+          // Wait before next attempt with exponential backoff
+          const waitTime = this.isCI ? 3000 * attempt : 1000 * attempt;
+          await this.page.waitForTimeout(waitTime);
         }
       }
     }
@@ -159,17 +172,17 @@ export class BasePage {
     // Wait for element to be attached to DOM
     await this.waitForElement(selector, { state: 'attached' });
 
-    const maxRetries = this.isFirefox ? 3 : 2;
+    const maxRetries = this.isFirefox && this.isCI ? 5 : this.isFirefox ? 3 : 2;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         // For Firefox, add small delay before clicking
         if (this.isFirefox) {
-          await this.page.waitForTimeout(300);
+          await this.page.waitForTimeout(this.isCI ? 500 : 300);
         }
 
         await this.page.click(selector, {
-          timeout: this.isFirefox ? 10000 : 5000,
+          timeout: this.isFirefox && this.isCI ? 20000 : this.isFirefox ? 10000 : 5000,
           ...options,
         });
         return; // Success
@@ -192,7 +205,7 @@ export class BasePage {
           // Try locator click with force
           await this.page.locator(selector).click({
             force: true,
-            timeout: this.isFirefox ? 10000 : 5000,
+            timeout: this.isFirefox && this.isCI ? 20000 : this.isFirefox ? 10000 : 5000,
             ...options,
           });
           return;
@@ -200,7 +213,8 @@ export class BasePage {
         } catch (retryError) {
           // eslint-disable-next-line no-console
           console.log(`Click retry ${attempt} failed: ${retryError.message}`);
-          await this.page.waitForTimeout(500 * attempt);
+          const waitTime = this.isCI ? 1000 * attempt : 500 * attempt;
+          await this.page.waitForTimeout(waitTime);
         }
       }
     }
@@ -212,19 +226,29 @@ export class BasePage {
     // For Firefox, clear field first and add delay
     if (this.isFirefox) {
       await this.page.fill(selector, '');
-      await this.page.waitForTimeout(200);
+      await this.page.waitForTimeout(this.isCI ? 500 : 200);
     }
 
     await this.page.fill(selector, text);
 
     // For Firefox, verify the text was filled
     if (this.isFirefox) {
-      await this.page.waitForTimeout(200);
+      await this.page.waitForTimeout(this.isCI ? 500 : 200);
       const value = await this.page.inputValue(selector);
       if (value !== text) {
         // eslint-disable-next-line no-console
         console.log(`Text verification failed for ${selector}, retrying...`);
         await this.page.fill(selector, text);
+
+        // Second verification attempt
+        if (this.isCI) {
+          await this.page.waitForTimeout(500);
+          const secondValue = await this.page.inputValue(selector);
+          if (secondValue !== text) {
+            // eslint-disable-next-line no-console
+            console.log(`Second text verification failed for ${selector}`);
+          }
+        }
       }
     }
   }

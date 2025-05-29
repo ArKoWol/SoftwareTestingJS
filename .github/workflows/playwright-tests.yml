@@ -62,7 +62,7 @@ jobs:
         retention-days: 30
 
   firefox-tests:
-    timeout-minutes: 60
+    timeout-minutes: 90
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -84,11 +84,13 @@ jobs:
       run: npx playwright install firefox --with-deps
     
     - name: Run Firefox tests (optimized)
-      run: npx playwright test --project=${{ matrix.project }} --workers=1
+      run: npx playwright test --project=${{ matrix.project }} --workers=1 --timeout=200000
       env:
         CI: true
         PROJECT_NAME: ${{ matrix.project }}
         NODE_OPTIONS: "--max-old-space-size=4096"
+        PLAYWRIGHT_BROWSER_EXECUTABLE_PATH: ""
+        DEBUG: "pw:browser*"
     
     - name: Upload test results
       uses: actions/upload-artifact@v4

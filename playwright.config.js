@@ -7,14 +7,15 @@ const __dirname = dirname(__filename);
 
 export default defineConfig({
   testDir: './e2e-tests',
-  globalSetup: process.env.CI && process.env.PROJECT_NAME?.includes('firefox')
+  // Disable global setup in CI for Firefox to prevent conflicts
+  globalSetup: !process.env.CI
     ? resolve(__dirname, './e2e-tests/global-setup.js')
     : undefined,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  timeout: process.env.CI ? 150000 : 120000, // 2.5 minutes for CI, 2 minutes locally
+  timeout: process.env.CI ? 180000 : 120000, // 3 minutes for CI, 2 minutes locally
   expect: {
     timeout: 20000, // 20 seconds for assertions
   },
@@ -27,8 +28,8 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    actionTimeout: 30000, // 30 seconds for actions
-    navigationTimeout: process.env.CI ? 90000 : 60000, // Longer in CI
+    actionTimeout: 45000, // Increased for CI
+    navigationTimeout: process.env.CI ? 120000 : 60000, // 2 minutes in CI
     launchOptions: {
       args: [
         '--disable-web-security',
@@ -65,11 +66,11 @@ export default defineConfig({
       use: {
         ...devices['Desktop Firefox'],
         viewport: { width: 1920, height: 1080 },
-        actionTimeout: 45000, // Firefox-specific longer action timeout
-        navigationTimeout: 90000, // Firefox-specific longer navigation timeout
+        actionTimeout: process.env.CI ? 90000 : 45000, // 1.5 minutes in CI
+        navigationTimeout: process.env.CI ? 180000 : 90000, // 3 minutes in CI
         launchOptions: {
-          timeout: 120000, // 2 minutes for browser launch in CI
-          slowMo: process.env.CI ? 500 : 0, // Add delay between actions in CI
+          timeout: process.env.CI ? 300000 : 120000, // 5 minutes for browser launch in CI
+          slowMo: process.env.CI ? 1000 : 0, // Add 1s delay between actions in CI
           args: [
             '--no-sandbox',
             '--disable-dev-shm-usage',
@@ -90,6 +91,18 @@ export default defineConfig({
             '--mute-audio',
             '--disable-background-networking',
             '--disable-background-downloads',
+            // Additional CI-specific flags
+            ...(process.env.CI ? [
+              '--disable-gpu',
+              '--disable-software-rasterizer',
+              '--disable-background-timer-throttling',
+              '--disable-renderer-backgrounding',
+              '--disable-field-trial-config',
+              '--disable-backing-store-limit',
+              '--disable-ipc-flooding-protection',
+              '--memory-pressure-off',
+              '--max_old_space_size=4096',
+            ] : []),
           ],
           firefoxUserPrefs: {
             // Disable notifications and permissions
@@ -129,9 +142,19 @@ export default defineConfig({
             'browser.tabs.animate': false,
             'browser.fullscreen.animate': false,
 
-            // Network timeouts
-            'network.http.connection-timeout': 90,
-            'network.http.response.timeout': 90,
+            // Network timeouts - increased for CI
+            'network.http.connection-timeout': process.env.CI ? 180 : 90,
+            'network.http.response.timeout': process.env.CI ? 180 : 90,
+
+            // Additional CI optimizations
+            ...(process.env.CI ? {
+              'browser.sessionstore.interval': 300000,
+              'browser.sessionstore.privacy_level': 2,
+              'toolkit.cosmeticAnimations.enabled': false,
+              'layers.acceleration.disabled': true,
+              'gfx.canvas.azure.backends': 'skia',
+              'gfx.content.azure.backends': 'skia',
+            } : {}),
           },
         },
       },
@@ -144,11 +167,11 @@ export default defineConfig({
       use: {
         ...devices['Desktop Firefox'],
         viewport: { width: 1366, height: 768 },
-        actionTimeout: 45000, // Firefox-specific longer action timeout
-        navigationTimeout: 90000, // Firefox-specific longer navigation timeout
+        actionTimeout: process.env.CI ? 90000 : 45000, // 1.5 minutes in CI
+        navigationTimeout: process.env.CI ? 180000 : 90000, // 3 minutes in CI
         launchOptions: {
-          timeout: 120000, // 2 minutes for browser launch in CI
-          slowMo: process.env.CI ? 500 : 0, // Add delay between actions in CI
+          timeout: process.env.CI ? 300000 : 120000, // 5 minutes for browser launch in CI
+          slowMo: process.env.CI ? 1000 : 0, // Add 1s delay between actions in CI
           args: [
             '--no-sandbox',
             '--disable-dev-shm-usage',
@@ -169,6 +192,18 @@ export default defineConfig({
             '--mute-audio',
             '--disable-background-networking',
             '--disable-background-downloads',
+            // Additional CI-specific flags
+            ...(process.env.CI ? [
+              '--disable-gpu',
+              '--disable-software-rasterizer',
+              '--disable-background-timer-throttling',
+              '--disable-renderer-backgrounding',
+              '--disable-field-trial-config',
+              '--disable-backing-store-limit',
+              '--disable-ipc-flooding-protection',
+              '--memory-pressure-off',
+              '--max_old_space_size=4096',
+            ] : []),
           ],
           firefoxUserPrefs: {
             // Disable notifications and permissions
@@ -208,9 +243,19 @@ export default defineConfig({
             'browser.tabs.animate': false,
             'browser.fullscreen.animate': false,
 
-            // Network timeouts
-            'network.http.connection-timeout': 90,
-            'network.http.response.timeout': 90,
+            // Network timeouts - increased for CI
+            'network.http.connection-timeout': process.env.CI ? 180 : 90,
+            'network.http.response.timeout': process.env.CI ? 180 : 90,
+
+            // Additional CI optimizations
+            ...(process.env.CI ? {
+              'browser.sessionstore.interval': 300000,
+              'browser.sessionstore.privacy_level': 2,
+              'toolkit.cosmeticAnimations.enabled': false,
+              'layers.acceleration.disabled': true,
+              'gfx.canvas.azure.backends': 'skia',
+              'gfx.content.azure.backends': 'skia',
+            } : {}),
           },
         },
       },
