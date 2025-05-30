@@ -317,3 +317,10 @@ For questions about this project, please contact the repository maintainer.
 ---
 
 **Note**: This project demonstrates modern E2E testing practices using Playwright with comprehensive cross-browser testing, automated data generation, parameterized testing, CI/CD integration, and detailed reporting capabilities. All acceptance criteria have been fully implemented and verified.
+
+
+# Review 05 30 
+* move all locators to the page object constructor section
+* Remove from root directory files from another task
+* Change generating random data from faker or fakerator
+* Do not union validation function.

@@ -51,7 +51,7 @@ export class SelectMenuPage extends BasePage {
     const selectedText = await this.page.locator(`${this.oldStyleSelect} option:checked`).textContent();
     expect(selectedText).toBe('Green');
   }
-
+  //TODO remove locators to the constructor section
   async selectMultiselectBlackBlue() {
     // Find the multiselect dropdown more specifically - it's the last one on the page
     const multiselectWrapper = this.page.locator('#selectMenuContainer .css-2b097c-container').last();

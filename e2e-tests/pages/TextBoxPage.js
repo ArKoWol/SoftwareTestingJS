@@ -48,7 +48,7 @@ export class TextBoxPage extends BasePage {
   async isOutputDisplayed() {
     return await this.isVisible(this.outputDiv);
   }
-
+  //TODO better separate fields checking. write getFieldData()
   async getOutputData() {
     const data = {};
 

@@ -41,7 +41,7 @@ test.describe('Select Menu Tests', () => {
     // The validation is already done inside the selectMultiselectBlackBlue method
     // No need for additional verification here as the method includes assertions
   });
-
+  //TODO avoid combining functionality, check separately
   test('Should perform all required selections as specified', async() => {
     // This test covers the complete scenario 2.5 requirements:
     // Select Value - Group 2, option 1
