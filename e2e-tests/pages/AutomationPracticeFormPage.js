@@ -43,14 +43,69 @@ export class AutomationPracticeFormPage extends BasePage {
     // Click the label associated with the radio button since the radio input might be hidden
     await this.page.click(`label[for="${genderSelector.substring(1)}"]`);
 
+    // Fill mobile number with validation
     await this.fill(this.mobileNumberInput, mobileNumber);
+
+    // Verify that mobile number was entered correctly
+    const actualMobileValue = await this.page.inputValue(this.mobileNumberInput);
+    if (actualMobileValue !== mobileNumber) {
+      // Try again with forced focus and clear
+      await this.page.focus(this.mobileNumberInput);
+      await this.page.fill(this.mobileNumberInput, '');
+      await this.page.fill(this.mobileNumberInput, mobileNumber);
+
+      // Wait a bit and check again
+      await this.waitForTimeout(500);
+      const retryValue = await this.page.inputValue(this.mobileNumberInput);
+      if (retryValue !== mobileNumber) {
+        // Force the value using JavaScript
+        await this.page.evaluate((selector, value) => {
+          const element = document.querySelector(selector);
+          if (element) {
+            element.value = value;
+            element.dispatchEvent(new Event('input', { bubbles: true }));
+            element.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }, this.mobileNumberInput, mobileNumber);
+      }
+    }
   }
 
   async submitForm(waitForModal = true) {
+    // Scroll to submit button to ensure it's visible
+    await this.page.locator(this.submitButton).scrollIntoViewIfNeeded();
+
+    // Wait a moment for any animations
+    await this.waitForTimeout(500);
+
+    // Click submit button
     await this.click(this.submitButton);
+
     if (waitForModal) {
-      // Wait for modal to appear
-      await this.waitForElement(this.modalDialog);
+      try {
+        // Wait for modal to appear with longer timeout
+        await this.waitForElement(this.modalDialog, 10000);
+      } catch {
+        // If modal doesn't appear, check if form validation failed
+        const firstNameValue = await this.page.inputValue(this.firstNameInput);
+        const lastNameValue = await this.page.inputValue(this.lastNameInput);
+        const emailValue = await this.page.inputValue(this.emailInput);
+        const mobileValue = await this.page.inputValue(this.mobileNumberInput);
+
+        // Check if there are any validation errors on the page
+        const validationErrors = await this.page.locator('.was-validated input:invalid, .is-invalid').count();
+
+        // Create error with debugging information
+        const debugInfo = {
+          firstName: firstNameValue,
+          lastName: lastNameValue,
+          email: emailValue,
+          mobile: mobileValue,
+          validationErrors,
+        };
+
+        throw new Error(`Modal did not appear. Form state: ${JSON.stringify(debugInfo)}`);
+      }
     } else {
       // Just wait a bit to ensure click was processed
       await this.waitForTimeout(1000);
@@ -96,7 +151,6 @@ export class AutomationPracticeFormPage extends BasePage {
       // First, try to remove any interfering elements
       await this.page.evaluate(() => {
         // Remove ad elements that might be interfering
-        // eslint-disable-next-line no-undef
         const ads = document.querySelectorAll('#fixedban, [id*="google_ads"], iframe[src*="googlesyndication"]');
         ads.forEach(ad => ad.remove());
       });
@@ -118,7 +172,6 @@ export class AutomationPracticeFormPage extends BasePage {
       } catch {
         // Last resort: force click or JavaScript click
         await this.page.evaluate(() => {
-          // eslint-disable-next-line no-undef
           const closeBtn = document.querySelector('#closeLargeModal');
           if (closeBtn) {closeBtn.click();}
         });

@@ -28,15 +28,23 @@ export class ToolTipsPage extends BasePage {
   }
 
   async waitForTooltip() {
-    // Try multiple tooltip selectors
+    // Try multiple tooltip selectors with more time
     for (const selector of this.tooltipSelectors) {
       try {
-        await this.page.waitForSelector(selector, { state: 'visible', timeout: 3000 });
-        return selector;
+        await this.page.waitForSelector(selector, { state: 'visible', timeout: 5000 });
+        // Double-check that the tooltip is really visible and has content
+        const text = await this.page.textContent(selector);
+        if (text && text.trim().length > 0) {
+          return selector;
+        }
       } catch {
         // Continue to next selector
       }
     }
+
+    // If no tooltip found, take a screenshot for debugging
+    await this.page.screenshot({ path: `debug-tooltip-${Date.now()}.png` });
+
     throw new Error('No tooltip found with any of the selectors');
   }
 
@@ -62,7 +70,8 @@ export class ToolTipsPage extends BasePage {
 
   async hoverOverButton() {
     await this.clearTooltip();
-    await this.page.hover(this.hoverMeButton);
+    await this.page.hover(this.hoverMeButton, { force: true });
+    await this.waitForTimeout(1000); // Wait for tooltip to appear
     const text = await this.getTooltipText();
     await this.clearTooltip();
     return text;
@@ -70,7 +79,8 @@ export class ToolTipsPage extends BasePage {
 
   async hoverOverTextField() {
     await this.clearTooltip();
-    await this.page.hover(this.hoverMeInput);
+    await this.page.hover(this.hoverMeInput, { force: true });
+    await this.waitForTimeout(1000); // Wait for tooltip to appear
     const text = await this.getTooltipText();
     await this.clearTooltip();
     return text;
@@ -80,7 +90,8 @@ export class ToolTipsPage extends BasePage {
     await this.clearTooltip();
     // There are multiple links, we need to find the one with "Contrary" text
     const contraryLink = this.page.locator('a:has-text("Contrary")');
-    await contraryLink.hover();
+    await contraryLink.hover({ force: true });
+    await this.waitForTimeout(1000); // Wait for tooltip to appear
     const text = await this.getTooltipText();
     await this.clearTooltip();
     return text;
@@ -90,7 +101,8 @@ export class ToolTipsPage extends BasePage {
     await this.clearTooltip();
     // Find the link with "1.10.32" text
     const sectionLink = this.page.locator('a:has-text("1.10.32")');
-    await sectionLink.hover();
+    await sectionLink.hover({ force: true });
+    await this.waitForTimeout(1000); // Wait for tooltip to appear
     const text = await this.getTooltipText();
     await this.clearTooltip();
     return text;

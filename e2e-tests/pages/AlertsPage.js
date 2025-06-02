@@ -9,7 +9,7 @@ export class AlertsPage extends BasePage {
     this.alertButton = '#alertButton';
     this.timerAlertButton = '#timerAlertButton';
     this.confirmButton = '#confirmButton';
-    this.promtButton = '#promtButton';
+    this.promptButton = '#promtButton';
     this.confirmResult = '#confirmResult';
     this.promptResult = '#promptResult';
   }
@@ -88,7 +88,7 @@ export class AlertsPage extends BasePage {
       dialogHandled = true;
     });
 
-    await this.click(this.promtButton);
+    await this.click(this.promptButton);
     await this.waitForTimeout(500);
 
     return { dialogHandled, dialogMessage };

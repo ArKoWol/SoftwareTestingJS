@@ -48,33 +48,29 @@ export class TextBoxPage extends BasePage {
   async isOutputDisplayed() {
     return await this.isVisible(this.outputDiv);
   }
-  //TODO better separate fields checking. write getFieldData()
+
+  async getFieldData(selector, labelToRemove) {
+    if (await this.isVisible(selector)) {
+      const text = await this.getText(selector);
+      return text.replace(labelToRemove, '').trim();
+    }
+    return null;
+  }
+
   async getOutputData() {
     const data = {};
 
     // Get name output
-    if (await this.isVisible(this.outputName)) {
-      const nameText = await this.getText(this.outputName);
-      data.name = nameText.replace('Name:', '').trim();
-    }
+    data.name = await this.getFieldData(this.outputName, 'Name:');
 
     // Get email output
-    if (await this.isVisible(this.outputEmail)) {
-      const emailText = await this.getText(this.outputEmail);
-      data.email = emailText.replace('Email:', '').trim();
-    }
+    data.email = await this.getFieldData(this.outputEmail, 'Email:');
 
     // Get current address output
-    if (await this.isVisible(this.outputCurrentAddress)) {
-      const currentAddressText = await this.getText(this.outputCurrentAddress);
-      data.currentAddress = currentAddressText.replace('Current Address :', '').trim();
-    }
+    data.currentAddress = await this.getFieldData(this.outputCurrentAddress, 'Current Address :');
 
     // Get permanent address output
-    if (await this.isVisible(this.outputPermanentAddress)) {
-      const permanentAddressText = await this.getText(this.outputPermanentAddress);
-      data.permanentAddress = permanentAddressText.replace('Permananet Address :', '').trim();
-    }
+    data.permanentAddress = await this.getFieldData(this.outputPermanentAddress, 'Permananet Address :');
 
     return data;
   }
