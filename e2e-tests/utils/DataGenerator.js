@@ -1,58 +1,36 @@
+import { faker } from '@faker-js/faker';
+
 export class DataGenerator {
   static generateRandomString(length = 8) {
-    return Math.random().toString(36).substring(2, length + 2);
+    return faker.string.alphanumeric(length);
   }
 
   static generateRandomNumber(min = 1000000000, max = 9999999999) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return faker.number.int({ min, max });
   }
 
   static generateRandomEmail() {
-    const domains = ['example.com', 'test.org', 'demo.net', 'sample.io', 'testing.co'];
-    const username = this.generateRandomString(8);
-    const domain = domains[Math.floor(Math.random() * domains.length)];
-    return `${username}@${domain}`;
+    return faker.internet.email();
   }
 
   static generateRandomName() {
-    const firstNames = ['John', 'Jane', 'Alex', 'Chris', 'Sam', 'Jordan', 'Taylor', 'Casey', 'Robin', 'Drew'];
-    const lastNames = [
-      'Smith', 'Johnson', 'Williams', 'Brown', 'Jones',
-      'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez',
-    ];
-
-    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
     return { firstName, lastName };
   }
 
   static generateRandomAddress() {
-    const streetNumbers = Math.floor(Math.random() * 9999) + 1;
-    const streetNames = ['Main St', 'Oak Ave', 'Pine Rd', 'Cedar Ln', 'Elm Way', 'Maple Dr', 'Park Blvd', 'First St'];
-    const cities = ['Springfield', 'Franklin', 'Georgetown', 'Madison', 'Clinton', 'Washington', 'Arlington', 'Salem'];
-    const states = ['CA', 'NY', 'TX', 'FL', 'IL', 'PA', 'OH', 'GA', 'NC', 'MI'];
-
-    const streetName = streetNames[Math.floor(Math.random() * streetNames.length)];
-    const city = cities[Math.floor(Math.random() * cities.length)];
-    const state = states[Math.floor(Math.random() * states.length)];
-    const zipCode = Math.floor(Math.random() * 90000) + 10000;
-
-    return `${streetNumbers} ${streetName}, ${city}, ${state} ${zipCode}`;
+    return faker.location.streetAddress({ useFullAddress: true });
   }
 
   static generateRandomGender() {
     const genders = ['Male', 'Female', 'Other'];
-    return genders[Math.floor(Math.random() * genders.length)];
+    return faker.helpers.arrayElement(genders);
   }
 
   static generateRandomMobileNumber() {
-    // Generate a 10-digit mobile number
-    let number = '';
-    for (let i = 0; i < 10; i++) {
-      number += Math.floor(Math.random() * 10);
-    }
-    return number;
+    const number = faker.number.int({ min: 1000000000, max: 9999999999 });
+    return number.toString();
   }
 
   static generateRandomFormData() {
@@ -77,15 +55,8 @@ export class DataGenerator {
   }
 
   static generateRandomPromptText() {
-    const prompts = [
-      'TestUser123',
-      'RandomPrompt456',
-      'AutomatedTest789',
-      'PlaywrightTest',
-      'E2ETestData',
-      'QAAutomation',
-      'TestScenario',
-    ];
-    return prompts[Math.floor(Math.random() * prompts.length)] + Math.floor(Math.random() * 1000);
+    const baseText = faker.lorem.word();
+    const number = faker.number.int({ min: 100, max: 999 });
+    return `${baseText}${number}`;
   }
 }

@@ -12,6 +12,8 @@ export default {
       describe: true, // Глобальные функции Mocha
       it: true,      // Глобальные функции Mocha
       expect: true,   // Для Chai
+      document: true, // Added for DOM document
+      Event: true,    // Added for DOM Event
     },
   },
   rules: {

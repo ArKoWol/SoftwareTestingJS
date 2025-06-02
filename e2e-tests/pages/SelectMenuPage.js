@@ -11,7 +11,11 @@ export class SelectMenuPage extends BasePage {
     this.oldStyleSelect = '#oldSelectMenu';
     this.multiselectDropdown = '#selectMenuContainer div:has-text("Select..."):last-of-type .css-2b097c-container';
 
-    // Option selectors - will be dynamic based on text
+    // Multiselect specific selectors
+    this.multiselectWrapper = '#selectMenuContainer .css-2b097c-container';
+    this.dropdownMenu = '.css-26l3qy-menu';
+    this.selectedValueContainer = '.css-12jo7m5';
+    this.multiselectContainer = '#selectMenuContainer';
   }
 
   async navigateToSelectMenuPage() {
@@ -54,23 +58,23 @@ export class SelectMenuPage extends BasePage {
 
   async selectMultiselectBlackBlue() {
     // Find the multiselect dropdown more specifically - it's the last one on the page
-    const multiselectWrapper = this.page.locator('#selectMenuContainer .css-2b097c-container').last();
+    const multiselectWrapper = this.page.locator(this.multiselectWrapper).last();
 
     // Click to open dropdown
     await multiselectWrapper.click();
     await this.waitForTimeout(1000); // Wait for dropdown to fully open
 
     // Wait for the dropdown menu to appear
-    await this.page.waitForSelector('.css-26l3qy-menu', { timeout: 10000 });
+    await this.page.waitForSelector(this.dropdownMenu, { timeout: 10000 });
 
     // Select Black - wait for it to be visible and clickable
-    const blackOption = this.page.locator('.css-26l3qy-menu').getByText('Black', { exact: true });
+    const blackOption = this.page.locator(this.dropdownMenu).getByText('Black', { exact: true });
     await blackOption.waitFor({ state: 'visible', timeout: 5000 });
     await blackOption.click();
     await this.waitForTimeout(500);
 
     // Select Blue - wait for it to be visible and clickable
-    const blueOption = this.page.locator('.css-26l3qy-menu').getByText('Blue', { exact: true });
+    const blueOption = this.page.locator(this.dropdownMenu).getByText('Blue', { exact: true });
     await blueOption.waitFor({ state: 'visible', timeout: 5000 });
     await blueOption.click();
     await this.waitForTimeout(500);
@@ -80,11 +84,13 @@ export class SelectMenuPage extends BasePage {
     await this.waitForTimeout(1000); // Give time for dropdown to close and selections to register
 
     // Verify selections are visible in the multiselect container - look for the selected value tags
-    const multiselectContainer = this.page.locator('#selectMenuContainer').last();
+    const multiselectContainer = this.page.locator(this.multiselectContainer).last();
 
     // Look for the selected value containers/pills that contain Black and Blue
-    const blackSelected = await multiselectContainer.locator('.css-12jo7m5', { hasText: 'Black' }).count() > 0;
-    const blueSelected = await multiselectContainer.locator('.css-12jo7m5', { hasText: 'Blue' }).count() > 0;
+    const blackSelected = await multiselectContainer
+      .locator(this.selectedValueContainer, { hasText: 'Black' }).count() > 0;
+    const blueSelected = await multiselectContainer
+      .locator(this.selectedValueContainer, { hasText: 'Blue' }).count() > 0;
 
     expect(blackSelected).toBe(true);
     expect(blueSelected).toBe(true);
@@ -119,9 +125,11 @@ export class SelectMenuPage extends BasePage {
     expect(oldStyleText).toBe('Green');
 
     // Validate Multiselect (Black and Blue should be visible as selected value tags)
-    const multiselectContainer = this.page.locator('#selectMenuContainer').last();
-    const blackExists = await multiselectContainer.locator('.css-12jo7m5', { hasText: 'Black' }).count() > 0;
-    const blueExists = await multiselectContainer.locator('.css-12jo7m5', { hasText: 'Blue' }).count() > 0;
+    const multiselectContainer = this.page.locator(this.multiselectContainer).last();
+    const blackExists = await multiselectContainer
+      .locator(this.selectedValueContainer, { hasText: 'Black' }).count() > 0;
+    const blueExists = await multiselectContainer
+      .locator(this.selectedValueContainer, { hasText: 'Blue' }).count() > 0;
 
     expect(blackExists).toBe(true);
     expect(blueExists).toBe(true);

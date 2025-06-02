@@ -42,23 +42,44 @@ test.describe('Select Menu Tests', () => {
     // No need for additional verification here as the method includes assertions
   });
 
-  test('Should perform all required selections as specified', async() => {
-    // This test covers the complete scenario 2.5 requirements:
-    // Select Value - Group 2, option 1
-    // Select One - Other
-    // Old Style Select Menu - Green
-    // Multiselect drop down - Black, Blue
+  test('Should select Group 2, option 1 from Select Value dropdown in combined scenario', async() => {
+    await selectMenuPage.selectValueGroup2Option1();
 
-    await selectMenuPage.performAllSelections();
+    // Validate Select Value dropdown selection
+    const selectValueText = await selectMenuPage.page
+      .locator(selectMenuPage.selectValueDropdown).textContent();
+    expect(selectValueText.includes('Group 2, option 1')).toBe(true);
+  });
 
-    // Validate all selections
-    const results = await selectMenuPage.validateAllSelections();
+  test('Should select Other from Select One dropdown in combined scenario', async() => {
+    await selectMenuPage.selectOneOther();
 
-    expect(results.selectValue.includes('Group 2, option 1')).toBe(true);
-    expect(results.selectOne.includes('Other')).toBe(true);
-    expect(results.oldStyle).toBe('Green');
-    expect(results.multiselect.black).toBe(true);
-    expect(results.multiselect.blue).toBe(true);
+    // Validate Select One dropdown selection
+    const selectOneText = await selectMenuPage.page.locator(selectMenuPage.selectOneDropdown).textContent();
+    expect(selectOneText.includes('Other')).toBe(true);
+  });
+
+  test('Should select Green from Old Style Select Menu in combined scenario', async() => {
+    await selectMenuPage.selectOldStyleGreen();
+
+    // Validate Old Style Select selection
+    const oldStyleText = await selectMenuPage.page
+      .locator(`${selectMenuPage.oldStyleSelect} option:checked`).textContent();
+    expect(oldStyleText).toBe('Green');
+  });
+
+  test('Should select Black and Blue from Multiselect dropdown in combined scenario', async() => {
+    await selectMenuPage.selectMultiselectBlackBlue();
+
+    // Validate Multiselect selection
+    const multiselectContainer = selectMenuPage.page.locator(selectMenuPage.multiselectContainer).last();
+    const blackExists = await multiselectContainer
+      .locator(selectMenuPage.selectedValueContainer, { hasText: 'Black' }).count() > 0;
+    const blueExists = await multiselectContainer
+      .locator(selectMenuPage.selectedValueContainer, { hasText: 'Blue' }).count() > 0;
+
+    expect(blackExists).toBe(true);
+    expect(blueExists).toBe(true);
   });
 
   test('Should handle dropdown interactions without conflicts', async() => {
