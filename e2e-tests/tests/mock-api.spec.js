@@ -49,7 +49,7 @@ test.describe('API Mocking Tests for /users/:id', () => {
       });
     });
 
-    const response = await page.evaluate(async({ url }) => {
+    const response = await page.evaluate(async(url) => {
       /* global fetch */
       const resp = await fetch(url);
       const body = await resp.json();
@@ -116,7 +116,7 @@ test.describe('API Mocking Tests for /users/:id', () => {
         });
       });
 
-      const response = await page.evaluate(async({ url }) => {
+      const response = await page.evaluate(async(url) => {
         /* global fetch */
         const resp = await fetch(url);
         const body = await resp.json();
