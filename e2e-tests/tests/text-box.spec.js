@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { TextBoxPage } from '../pages/TextBoxPage.js';
 import { DataGenerator } from '../utils/DataGenerator.js';
+import { textBoxTestData } from '../test-data/textBoxTestData.js';
 
 // Generate multiple random data sets for parameterized testing
 const randomDataSets = [
@@ -39,37 +40,23 @@ test.describe('Text Box Tests', () => {
   });
 
   test('Should fill text box with specific test data for edge cases', async() => {
-    const testData = {
-      fullName: 'John Doe Smith',
-      email: 'john.doe.smith@testmail.com',
-      currentAddress: '123 Main Street, New York, NY 10001',
-      permanentAddress: '456 Oak Avenue, Los Angeles, CA 90210',
-    };
-
     await textBoxPage.fillTextBoxes(
-      testData.fullName,
-      testData.email,
-      testData.currentAddress,
-      testData.permanentAddress,
+      textBoxTestData.edgeCases.fullName,
+      textBoxTestData.edgeCases.email,
+      textBoxTestData.edgeCases.currentAddress,
+      textBoxTestData.edgeCases.permanentAddress,
     );
 
     await textBoxPage.submitForm();
-    await textBoxPage.validateTextBoxSubmission(testData);
+    await textBoxPage.validateTextBoxSubmission(textBoxTestData.edgeCases);
   });
 
   test('Should handle empty fields properly', async() => {
-    const testData = {
-      fullName: '',
-      email: '',
-      currentAddress: '',
-      permanentAddress: '',
-    };
-
     await textBoxPage.fillTextBoxes(
-      testData.fullName,
-      testData.email,
-      testData.currentAddress,
-      testData.permanentAddress,
+      textBoxTestData.emptyFields.fullName,
+      textBoxTestData.emptyFields.email,
+      textBoxTestData.emptyFields.currentAddress,
+      textBoxTestData.emptyFields.permanentAddress,
     );
 
     // Submit form without waiting for output since empty fields might not show output
@@ -81,21 +68,14 @@ test.describe('Text Box Tests', () => {
   });
 
   test('Should fill text box with special characters', async() => {
-    const testData = {
-      fullName: 'José María González-López',
-      email: 'jose.maria@domain-test.co.uk',
-      currentAddress: '123 Main St. Apt 5B, São Paulo, SP 01234-567',
-      permanentAddress: '456 Oak Ave. Suite 10C, México D.F., MX 12345',
-    };
-
     await textBoxPage.fillTextBoxes(
-      testData.fullName,
-      testData.email,
-      testData.currentAddress,
-      testData.permanentAddress,
+      textBoxTestData.specialCharacters.fullName,
+      textBoxTestData.specialCharacters.email,
+      textBoxTestData.specialCharacters.currentAddress,
+      textBoxTestData.specialCharacters.permanentAddress,
     );
 
     await textBoxPage.submitForm();
-    await textBoxPage.validateTextBoxSubmission(testData);
+    await textBoxPage.validateTextBoxSubmission(textBoxTestData.specialCharacters);
   });
 });
