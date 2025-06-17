@@ -239,10 +239,4 @@ export default defineConfig({
       },
     },
   ],
-
-  webServer: {
-    command: 'echo "Using external server"',
-    url: 'https://demoqa.com',
-    reuseExistingServer: true,
-  },
 });
