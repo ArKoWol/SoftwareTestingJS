@@ -1,0 +1,122 @@
+<testsuites id="" name="" tests="52" failures="0" skipped="0" errors="0" time="16.761509999999998">
+<testsuite name="tests/account-api-mocked.spec.js" timestamp="2025-06-17T11:26:45.016Z" hostname="chromium-1920x1080" tests="8" failures="0" skipped="0" time="3.021" errors="0">
+<testcase name="Account API Tests (Mocked) › Positive: Create a user with valid data" classname="tests/account-api-mocked.spec.js" time="0.551">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempt to create a user with incorrect data (empty password)" classname="tests/account-api-mocked.spec.js" time="0.551">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Positive: Generate a token for an existing user" classname="tests/account-api-mocked.spec.js" time="0.546">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempt to generate a token with an incorrect password" classname="tests/account-api-mocked.spec.js" time="0.55">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Positive: Get information about an existing user" classname="tests/account-api-mocked.spec.js" time="0.214">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempt to get information about a non-existent user" classname="tests/account-api-mocked.spec.js" time="0.21">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Positive: Deleting an existing user" classname="tests/account-api-mocked.spec.js" time="0.198">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempting to delete a non-existent user" classname="tests/account-api-mocked.spec.js" time="0.201">
+</testcase>
+</testsuite>
+<testsuite name="tests/mock-api.spec.js" timestamp="2025-06-17T11:26:45.016Z" hostname="chromium-1920x1080" tests="5" failures="0" skipped="0" time="1.179" errors="0">
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the successful response for a valid user ID" classname="tests/mock-api.spec.js" time="0.259">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the error response for status 403" classname="tests/mock-api.spec.js" time="0.225">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the error response for status 404" classname="tests/mock-api.spec.js" time="0.293">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the error response for status 502" classname="tests/mock-api.spec.js" time="0.262">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Ensure response with status 204 (No Content) is handled correctly" classname="tests/mock-api.spec.js" time="0.14">
+</testcase>
+</testsuite>
+<testsuite name="tests/account-api-mocked.spec.js" timestamp="2025-06-17T11:26:45.016Z" hostname="chromium-1366x768" tests="8" failures="0" skipped="0" time="2.041" errors="0">
+<testcase name="Account API Tests (Mocked) › Positive: Create a user with valid data" classname="tests/account-api-mocked.spec.js" time="0.321">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempt to create a user with incorrect data (empty password)" classname="tests/account-api-mocked.spec.js" time="0.301">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Positive: Generate a token for an existing user" classname="tests/account-api-mocked.spec.js" time="0.328">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempt to generate a token with an incorrect password" classname="tests/account-api-mocked.spec.js" time="0.349">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Positive: Get information about an existing user" classname="tests/account-api-mocked.spec.js" time="0.184">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempt to get information about a non-existent user" classname="tests/account-api-mocked.spec.js" time="0.183">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Positive: Deleting an existing user" classname="tests/account-api-mocked.spec.js" time="0.189">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempting to delete a non-existent user" classname="tests/account-api-mocked.spec.js" time="0.186">
+</testcase>
+</testsuite>
+<testsuite name="tests/mock-api.spec.js" timestamp="2025-06-17T11:26:45.016Z" hostname="chromium-1366x768" tests="5" failures="0" skipped="0" time="0.793" errors="0">
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the successful response for a valid user ID" classname="tests/mock-api.spec.js" time="0.16">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the error response for status 403" classname="tests/mock-api.spec.js" time="0.151">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the error response for status 404" classname="tests/mock-api.spec.js" time="0.176">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the error response for status 502" classname="tests/mock-api.spec.js" time="0.17">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Ensure response with status 204 (No Content) is handled correctly" classname="tests/mock-api.spec.js" time="0.136">
+</testcase>
+</testsuite>
+<testsuite name="tests/account-api-mocked.spec.js" timestamp="2025-06-17T11:26:45.016Z" hostname="firefox-1920x1080" tests="8" failures="0" skipped="0" time="11.494" errors="0">
+<testcase name="Account API Tests (Mocked) › Positive: Create a user with valid data" classname="tests/account-api-mocked.spec.js" time="2.296">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempt to create a user with incorrect data (empty password)" classname="tests/account-api-mocked.spec.js" time="1.676">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Positive: Generate a token for an existing user" classname="tests/account-api-mocked.spec.js" time="1.85">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempt to generate a token with an incorrect password" classname="tests/account-api-mocked.spec.js" time="2.528">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Positive: Get information about an existing user" classname="tests/account-api-mocked.spec.js" time="0.794">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempt to get information about a non-existent user" classname="tests/account-api-mocked.spec.js" time="0.744">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Positive: Deleting an existing user" classname="tests/account-api-mocked.spec.js" time="0.802">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempting to delete a non-existent user" classname="tests/account-api-mocked.spec.js" time="0.804">
+</testcase>
+</testsuite>
+<testsuite name="tests/mock-api.spec.js" timestamp="2025-06-17T11:26:45.016Z" hostname="firefox-1920x1080" tests="5" failures="0" skipped="0" time="3.447" errors="0">
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the successful response for a valid user ID" classname="tests/mock-api.spec.js" time="0.739">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the error response for status 403" classname="tests/mock-api.spec.js" time="0.749">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the error response for status 404" classname="tests/mock-api.spec.js" time="0.748">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the error response for status 502" classname="tests/mock-api.spec.js" time="0.644">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Ensure response with status 204 (No Content) is handled correctly" classname="tests/mock-api.spec.js" time="0.567">
+</testcase>
+</testsuite>
+<testsuite name="tests/account-api-mocked.spec.js" timestamp="2025-06-17T11:26:45.016Z" hostname="firefox-1366x768" tests="8" failures="0" skipped="0" time="7.942" errors="0">
+<testcase name="Account API Tests (Mocked) › Positive: Create a user with valid data" classname="tests/account-api-mocked.spec.js" time="1.87">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempt to create a user with incorrect data (empty password)" classname="tests/account-api-mocked.spec.js" time="0.946">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Positive: Generate a token for an existing user" classname="tests/account-api-mocked.spec.js" time="1.293">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempt to generate a token with an incorrect password" classname="tests/account-api-mocked.spec.js" time="1.975">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Positive: Get information about an existing user" classname="tests/account-api-mocked.spec.js" time="0.381">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempt to get information about a non-existent user" classname="tests/account-api-mocked.spec.js" time="0.464">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Positive: Deleting an existing user" classname="tests/account-api-mocked.spec.js" time="0.516">
+</testcase>
+<testcase name="Account API Tests (Mocked) › Negative: Attempting to delete a non-existent user" classname="tests/account-api-mocked.spec.js" time="0.497">
+</testcase>
+</testsuite>
+<testsuite name="tests/mock-api.spec.js" timestamp="2025-06-17T11:26:45.016Z" hostname="firefox-1366x768" tests="5" failures="0" skipped="0" time="3.244" errors="0">
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the successful response for a valid user ID" classname="tests/mock-api.spec.js" time="0.615">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the error response for status 403" classname="tests/mock-api.spec.js" time="0.641">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the error response for status 404" classname="tests/mock-api.spec.js" time="0.682">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Validate the structure of the error response for status 502" classname="tests/mock-api.spec.js" time="0.714">
+</testcase>
+<testcase name="API Mocking Tests for /users/:id › Ensure response with status 204 (No Content) is handled correctly" classname="tests/mock-api.spec.js" time="0.592">
+</testcase>
+</testsuite>
+</testsuites>

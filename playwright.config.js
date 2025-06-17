@@ -1,16 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
-import { fileURLToPath } from 'url';
-import { dirname, resolve } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 export default defineConfig({
   testDir: './e2e-tests',
   // Disable global setup in CI for Firefox to prevent conflicts
-  globalSetup: !process.env.CI
-    ? resolve(__dirname, './e2e-tests/global-setup.js')
-    : undefined,
+  globalSetup: undefined,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
